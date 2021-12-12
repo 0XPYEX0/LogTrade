@@ -3,4 +3,4 @@ version: '${version}'
 main: me.xpyex.plugin.bukkit.logtrade.LogTrade
 softdepend: [ ProtocolLib ]
 authors: [ XPYEX ]
-description: LogTrade
+description: TradeMe
