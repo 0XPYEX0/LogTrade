@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -34,6 +36,9 @@ public class HandleEvent implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInvClick(InventoryClickEvent event) {
+        if (event.getClickedInventory() == null) {
+            return;
+        }
         if (event.getClickedInventory().getType() == InventoryType.CRAFTING || event.getClickedInventory().getType() == InventoryType.WORKBENCH) {
             if (HandleConfig.config.getJSONObject("LogConfig").getBoolean("LogCraft")) {
                 if (event.getAction().toString().contains("PICKUP")) {
@@ -48,6 +53,8 @@ public class HandleEvent implements Listener {
             if (event.getClickedInventory() != event.getWhoClicked().getInventory()) {
                 if (event.getAction().toString().contains("PICKUP")) {
                     HandleLog.log("玩家 " + event.getWhoClicked().getName() + " 从 " + event.getClickedInventory().getTitle() + " 界面取出了: " + event.getCurrentItem() + "\n玩家当前坐标 " + event.getWhoClicked().getLocation());
+                } else if (event.getClick().isShiftClick() || event.getClick().isKeyboardClick()) {
+                    HandleLog.log("玩家 " + event.getWhoClicked().getName() + " 从 " + event.getWhoClicked().getOpenInventory().getTitle() + " 取出了: " + event.getCurrentItem() + "\n玩家当前坐标 " + event.getWhoClicked().getLocation());
                 }
             } else {
                 if (event.getAction().toString().contains("PLACE")) {
@@ -59,6 +66,8 @@ public class HandleEvent implements Listener {
             if (event.getClickedInventory() == event.getWhoClicked().getInventory()) {
                 if (event.getAction().toString().contains("PICKUP")) {
                     HandleLog.log("玩家 " + event.getWhoClicked().getName() + " 从 自身背包 取出了: " + event.getCursor() + "\n玩家当前坐标 " + event.getWhoClicked().getLocation());
+                } else if (event.getClick().isShiftClick() || event.getClick().isKeyboardClick()) {
+                    HandleLog.log("玩家 " + event.getWhoClicked().getName() + " 向 " + event.getWhoClicked().getOpenInventory().getTitle() + " 放入了: " + event.getCurrentItem() + "\n玩家当前坐标 " + event.getWhoClicked().getLocation());
                 }
             } else {
                 if (event.getAction().toString().contains("PLACE")) {
