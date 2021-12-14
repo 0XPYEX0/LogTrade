@@ -44,8 +44,8 @@ public class HandleConfig {
         cfg.put("LogInvDrop", true);
         cfg.put("LogTradeMe", true);
         cfg.put("LogCraft", true);
-        cfg.put("LogNormalItem", false);
         root.put("LogConfig", cfg);
+        root.put("ConsoleLog", true);
         return root;
     }
 

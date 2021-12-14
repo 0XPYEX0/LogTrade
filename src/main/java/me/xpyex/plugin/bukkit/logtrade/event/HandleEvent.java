@@ -2,8 +2,11 @@ package me.xpyex.plugin.bukkit.logtrade.event;
 
 import me.xpyex.plugin.bukkit.logtrade.file.HandleConfig;
 import me.xpyex.plugin.bukkit.logtrade.file.HandleLog;
-import me.xpyex.plugin.bukkit.logtrade.utils.Utils;
+import me.xpyex.plugin.bukkit.logtrade.utils.ASMUtils;
 
+import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,13 +14,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 public class HandleEvent implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDrop(PlayerDropItemEvent event) {
-        if (Utils.isNormalItem(event.getItemDrop().getItemStack()) && !HandleConfig.config.getJSONObject("LogConfig").getBoolean("LogNormalItem")) {
-            return;
-        }
         if (HandleConfig.config.getJSONObject("LogConfig").getBoolean("LogDrop")) {
             HandleLog.log("玩家 " + event.getPlayer().getDisplayName() + " 在 " + event.getPlayer().getLocation() + " 位置丢出道具: " + event.getItemDrop().getItemStack());
         }
@@ -25,9 +27,6 @@ public class HandleEvent implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPickUp(PlayerPickupItemEvent event) {
-        if (Utils.isNormalItem(event.getItem().getItemStack()) && !HandleConfig.config.getJSONObject("LogConfig").getBoolean("LogNormalItem")) {
-            return;
-        }
         if (HandleConfig.config.getJSONObject("LogConfig").getBoolean("LogDrop")) {
             HandleLog.log("玩家 " + event.getPlayer().getDisplayName() + " 在 " + event.getPlayer().getLocation() + " 位置拾取道具: " + event.getItem().getItemStack());
         }
@@ -66,6 +65,16 @@ public class HandleEvent implements Listener {
                     HandleLog.log("玩家 " + event.getWhoClicked().getName() + " 向 " + event.getClickedInventory().getTitle() + " 界面放入了: " + event.getCursor() + "\n玩家当前坐标 " + event.getWhoClicked().getLocation());
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onBukkitSetItem(BukkitSetItemEvent event) {
+        HumanEntity player = event.getEntity();
+        ItemStack item = event.getItem();
+        if (player instanceof Player && item != null && item.getType() != Material.AIR) {
+            Plugin plugin = ASMUtils.trace();
+            HandleLog.log("插件 " + (plugin == null ? "未知" : plugin.getName()) + " 给予玩家 " + player.getName() + " 道具: " + item);
         }
     }
 }

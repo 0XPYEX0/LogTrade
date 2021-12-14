@@ -1,7 +1,11 @@
 package me.xpyex.plugin.bukkit.logtrade.file;
 
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import me.xpyex.plugin.bukkit.logtrade.LogTrade;
 import me.xpyex.plugin.bukkit.logtrade.utils.Utils;
+
 import org.bukkit.Bukkit;
 
 import java.io.File;
@@ -11,8 +15,11 @@ import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class HandleLog {
+    static {
+        TimeZone.setDefault(Calendar.getInstance().getTimeZone());
+    }
     private final static File LOG_FOLDER = new File("plugins/LogTrade/logs");
-    private final static File LOG_FILE = new File("plugins/LogTrade/logs/" + (new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss").format(new Date())) + ".log");
+    public final static File LOG_FILE = new File("plugins/LogTrade/logs/" + (new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date())) + ".log");
     public final static ConcurrentLinkedQueue<String> LOG_LIST = new ConcurrentLinkedQueue<>();
     public static boolean init() {
         try {
@@ -44,5 +51,8 @@ public class HandleLog {
 
     public static void log(String msg) {
         LOG_LIST.add(Utils.getTimeOfNow() + msg);
+        if (HandleConfig.config.getBoolean("ConsoleLog")) {
+            LogTrade.LOGGER.info(msg);
+        }
     }
 }
