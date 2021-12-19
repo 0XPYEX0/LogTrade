@@ -1,6 +1,7 @@
 package me.xpyex.plugin.bukkit.logtrade.file;
 
 import java.io.File;
+
 import me.xpyex.plugin.bukkit.logtrade.LogTrade;
 
 public class HandleAllFile {
