@@ -80,7 +80,7 @@ public class Utils {
             for (Object V : HandleConfig.config.getJSONObject("ItemWhiteList").getJSONArray("Items")) {
                 if (V instanceof JSONObject) {
                     JSONObject itemInfo = (JSONObject) V;
-                    if (itemInfo.getString("Type").equals(item.getType().toString()) && itemInfo.getString("Name").equals(item.getItemMeta().getDisplayName()) && itemInfo.getString("Lores").equals(item.getItemMeta().hasLore() ? item.getItemMeta().getLore().toString() : "<无>")) {
+                    if (itemInfo.getString("Type").equals(item.getType().toString()) && itemInfo.getString("Name").equals(item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : "<无>") && itemInfo.getString("Lores").equals(item.getItemMeta().hasLore() ? item.getItemMeta().getLore().toString() : "<无>")) {
                         return true;
                     }
                 }

@@ -35,9 +35,10 @@ public class HandleCmd implements CommandExecutor {
         if (args[0].equalsIgnoreCase("reload")) {
             if (!HandleConfig.reloadConfig()) {
                 Utils.autoSendMsg(sender, "&c重载出错", "&c请检查后台报错尝试解决，或联系开发者 QQ1723275529");
-                return true;
+            } else {
+                Utils.autoSendMsg(sender, "&a重载成功");
             }
-            Utils.autoSendMsg(sender, "&a重载成功");
+            return true;
         }
         if (args[0].equalsIgnoreCase("addItem")) {
             if (!(sender instanceof Player)) {
@@ -61,7 +62,7 @@ public class HandleCmd implements CommandExecutor {
                     return;
                 }
                 JSONObject itemInfo = new JSONObject();
-                itemInfo.put("Name", item.getItemMeta().getDisplayName());
+                itemInfo.put("Name", item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : "<无>");
                 itemInfo.put("Lores", item.getItemMeta().hasLore() ? item.getItemMeta().getLore().toString() : "<无>");
                 itemInfo.put("Type", item.getType().toString());
                 HandleConfig.config.getJSONObject("ItemWhiteList").getJSONArray("Items").add(itemInfo);
@@ -77,6 +78,7 @@ public class HandleCmd implements CommandExecutor {
                 });
                 Utils.autoSendMsg(sender, "&a添加完成");
             });
+            return true;
         }
         if (args[0].equalsIgnoreCase("addType")) {
             if (!(sender instanceof Player)) {
@@ -107,6 +109,7 @@ public class HandleCmd implements CommandExecutor {
                 });
                 Utils.autoSendMsg(sender, "&a添加完成");
             });
+            return true;
         }
         return true;
     }

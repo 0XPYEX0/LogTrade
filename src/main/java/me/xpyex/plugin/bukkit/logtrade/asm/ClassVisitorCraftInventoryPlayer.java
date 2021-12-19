@@ -9,7 +9,7 @@ import org.objectweb.asm.Opcodes;
  */
 public class ClassVisitorCraftInventoryPlayer extends ClassVisitor {
 
-    private static final int VERSION = Opcodes.ASM9;
+    private static final int VERSION = Opcodes.ASM6;
     private final String className;
 
     public ClassVisitorCraftInventoryPlayer(String className, ClassVisitor classVisitor) {
