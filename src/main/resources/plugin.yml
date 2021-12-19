@@ -4,3 +4,6 @@ main: me.xpyex.plugin.bukkit.logtrade.LogTrade
 softdepend: [ ProtocolLib ]
 authors: [ XPYEX ]
 description: TradeMe
+commands:
+  logtrade:
+    description: "LogTrade"

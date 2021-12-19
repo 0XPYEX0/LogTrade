@@ -1,58 +1,64 @@
 package me.xpyex.plugin.bukkit.logtrade.file;
 
+import java.io.PrintWriter;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.TimeZone;
 
 import me.xpyex.plugin.bukkit.logtrade.LogTrade;
-import me.xpyex.plugin.bukkit.logtrade.utils.Utils;
-
-import org.bukkit.Bukkit;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import me.xpyex.plugin.bukkit.logtrade.utils.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 
 public class HandleLog {
     static {
         TimeZone.setDefault(Calendar.getInstance().getTimeZone());
     }
     private final static File LOG_FOLDER = new File("plugins/LogTrade/logs");
-    public final static File LOG_FILE = new File("plugins/LogTrade/logs/" + (new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date())) + ".log");
-    public final static ConcurrentLinkedQueue<String> LOG_LIST = new ConcurrentLinkedQueue<>();
+    public final static HashMap<Player, ConcurrentLinkedQueue<String>> PLAYER_LIST = new HashMap<>();
+
+    public static void log(Player player, String msg) {
+        if (!PLAYER_LIST.containsKey(player)) {
+            PLAYER_LIST.put(player, new ConcurrentLinkedQueue<>());
+        }
+        PLAYER_LIST.get(player).add("[" + Utils.getTimeOfNow() + "] " + msg);
+        if (HandleConfig.config.getBoolean("ConsoleLog")) {
+            LogTrade.LOGGER.info(msg);
+        }
+    }
+
+    public static void log(HumanEntity player, String msg) {
+        if (player instanceof Player) {
+            log((Player)player, msg);
+        }
+    }
+
     public static boolean init() {
-        try {
-            if (!LOG_FOLDER.exists()) {
-                LOG_FOLDER.mkdirs();
-            }
-            LOG_FILE.createNewFile();
-            LogTrade.LOGGER.info("本次记录文件为: " + LOG_FILE.getName());
-            Bukkit.getScheduler().runTaskTimerAsynchronously(LogTrade.INSTANCE, () -> {
+        if (!LOG_FOLDER.exists()) {
+            LOG_FOLDER.mkdirs();
+        }
+        Bukkit.getScheduler().runTaskTimerAsynchronously(LogTrade.INSTANCE, () -> {
+            PLAYER_LIST.forEach((player, strings) -> {
                 try {
-                    PrintWriter out = new PrintWriter(LOG_FILE, "UTF-8");
-                    for (String s : LOG_LIST) {
+                    final File log = Utils.getLogFile(player);
+                    if (!log.exists()) {
+                        log.createNewFile();
+                    }
+                    PrintWriter out = new PrintWriter(log, "UTF-8");
+                    for (String s : strings) {
                         out.println(s);
                     }
                     out.flush();
                     out.close();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    LogTrade.LOGGER.warning("请将该错误报告至开发者，在修复之前将不会记录");
-                    Bukkit.getScheduler().cancelTasks(LogTrade.INSTANCE);
                 }
-            }, 20 * 60, 20 * 60);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public static void log(String msg) {
-        LOG_LIST.add(Utils.getTimeOfNow() + msg);
-        if (HandleConfig.config.getBoolean("ConsoleLog")) {
-            LogTrade.LOGGER.info(msg);
-        }
+            });
+        }, 20 * 60, 20 * 60);
+        return true;
     }
 }

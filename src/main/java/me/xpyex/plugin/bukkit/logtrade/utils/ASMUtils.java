@@ -26,7 +26,7 @@ public class ASMUtils{
      */
     private static final ClassLoader CONTEXT_CLASS_LOADER = Thread.currentThread().getContextClassLoader();
 
-    public static void ASMLoad() {
+    public static boolean ASMLoad() {
         // 插件加载时 进行字节码修改
 
         // 玩家背包实现类的类名
@@ -43,8 +43,10 @@ public class ASMUtils{
             byte[] bytes = classWriter.toByteArray();
             // 加载 CraftInventoryPlayer类
             loadClass(className, bytes);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
 
     }

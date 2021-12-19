@@ -1,6 +1,7 @@
 package me.xpyex.plugin.bukkit.logtrade.file;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.FileInputStream;
@@ -11,11 +12,14 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
 public class HandleConfig {
-    private static final File CONFIG_FILE = new File("plugins/LogTrade/config.json");
+    public static final File CONFIG_FILE = new File("plugins/LogTrade/config.json");
     public static JSONObject config;
 
     public static boolean loadConfig() {
         try {
+            if (!HandleAllFile.ROOT.exists()) {
+                return HandleAllFile.loadAllFiles();
+            }
             if (!CONFIG_FILE.exists()) {
                 createConfigFile();
             }
@@ -46,6 +50,19 @@ public class HandleConfig {
         cfg.put("LogCraft", true);
         root.put("LogConfig", cfg);
         root.put("ConsoleLog", true);
+
+        JSONObject itemWL = new JSONObject();
+        itemWL.put("Enabled", true);
+        JSONArray items = new JSONArray();
+        itemWL.put("Items", items);
+        root.put("ItemWhiteList", itemWL);
+
+        JSONObject typeWL = new JSONObject();
+        typeWL.put("Enabled", true);
+        JSONArray types = new JSONArray();
+        typeWL.put("Types", types);
+        root.put("TypeWhiteList", typeWL);
+
         return root;
     }
 
@@ -57,5 +74,10 @@ public class HandleConfig {
             out.flush();
             out.close();
         } catch (Exception ignored) {}
+    }
+
+    public static boolean reloadConfig() {
+        config = null;
+        return loadConfig();
     }
 }
