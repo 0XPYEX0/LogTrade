@@ -65,6 +65,7 @@ public class Utils {
     }
 
     public static boolean needLog(ItemStack item) {
+        /*
         if (item == null || item.getType() == Material.AIR) {
             return false;
         }
@@ -87,6 +88,7 @@ public class Utils {
             }
             return false;
         }
+         */
         return true;
     }
 }
