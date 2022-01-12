@@ -30,8 +30,10 @@ public class HandleEvent implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDrop(PlayerDropItemEvent event) {
         Bukkit.getScheduler().runTaskAsynchronously(LogTrade.INSTANCE, () -> {
-            if (Utils.needLog(event.getItemDrop().getItemStack())) {
+            if (HandleConfig.config.getJSONObject("LogConfig").getBoolean("LogDrop")) {
+                if (Utils.needLog(event.getItemDrop().getItemStack())) {
                     HandleLog.log(event.getPlayer(), "玩家 " + event.getPlayer().getDisplayName() + " 在 " + event.getPlayer().getLocation() + " 位置丢出道具: " + event.getItemDrop().getItemStack());
+                }
             }
         });
     }
@@ -39,8 +41,10 @@ public class HandleEvent implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPickUp(PlayerPickupItemEvent event) {
         Bukkit.getScheduler().runTaskAsynchronously(LogTrade.INSTANCE, () -> {
-            if (Utils.needLog(event.getItem().getItemStack())) {
+            if (HandleConfig.config.getJSONObject("LogConfig").getBoolean("LogPickUp")) {
+                if (Utils.needLog(event.getItem().getItemStack())) {
                     HandleLog.log(event.getPlayer(), "玩家 " + event.getPlayer().getDisplayName() + " 在 " + event.getPlayer().getLocation() + " 位置拾取道具: " + event.getItem().getItemStack());
+                }
             }
         });
     }
@@ -55,10 +59,12 @@ public class HandleEvent implements Listener {
         HumanEntity player = event.getWhoClicked();
         Bukkit.getScheduler().runTaskAsynchronously(LogTrade.INSTANCE, () -> {
             if (inv.getType() == InventoryType.CRAFTING || inv.getType() == InventoryType.WORKBENCH) {
-                if (event.getAction().toString().contains("PICKUP")) {
-                    if (event.getSlotType() == InventoryType.SlotType.RESULT) {
-                        if (Utils.needLog(item[0])) {
-                            HandleLog.log(player, "玩家 " + player.getName() + " 合成了 " + item[0] + "\n玩家当前坐标 " + player.getLocation());
+                if (HandleConfig.config.getJSONObject("LogConfig").getBoolean("LogCraft")) {
+                    if (event.getAction().toString().contains("PICKUP")) {
+                        if (event.getSlotType() == InventoryType.SlotType.RESULT) {
+                            if (Utils.needLog(item[0])) {
+                                HandleLog.log(player, "玩家 " + player.getName() + " 合成了 " + item[0] + "\n玩家当前坐标 " + player.getLocation());
+                            }
                         }
                     }
                 }
